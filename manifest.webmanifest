@@ -1,7 +1,7 @@
 {
-  "name": "Workout Tracker",
-  "short_name": "Workout",
-  "description": "Track strength, power and weekly workout plans",
+  "name": "District Flatwater Fitness",
+  "short_name": "Flatwater Fit",
+  "description": "District Flatwater Fitness training plans, workouts and progress",
   "start_url": "./",
   "scope": "./",
   "display": "standalone",
