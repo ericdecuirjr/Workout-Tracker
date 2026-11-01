@@ -2,3 +2,21 @@
 nav{overflow-x:auto}nav button{white-space:nowrap;padding:11px 9px;font-size:.86rem}.stats{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}.stat{background:white;border:1px solid #e0e6ef;border-radius:14px;padding:16px}.stat strong{display:block;font-size:1.6rem;color:#2563eb}.stat span{font-size:.82rem;color:#637083}.record{padding:10px 0;border-bottom:1px solid #e0e6ef}.record:last-child{border-bottom:0}.record strong{display:block}.record small{color:#637083}canvas{max-width:100%} [hidden]{display:none!important}
 
 .planmove{background:#fff;border:1px solid #e0e6ef;border-radius:12px;padding:14px;margin:12px 0}.planmove p{color:#526174;margin:8px 0}.planmove .row{align-items:center;justify-content:space-between}.planmove a{padding:10px}.importlabel{font-size:.85rem}.importlabel input{padding:8px}nav{scrollbar-width:thin}nav button{min-width:78px}
+
+/* Phase 3 schedule builder */
+.help{font-size:.88rem;line-height:1.45;color:#56647a}
+.help.error{color:#b42318;font-weight:600}
+.plan-editor-card{margin-top:12px}
+.schedule-day{border-top:1px solid #e0e6ef;padding:16px 0}
+.schedule-day:first-child{border-top:none}
+.schedule-day>strong{display:block;margin-bottom:8px}
+.schedule-day .grid{flex-wrap:wrap}
+.schedule-day .grid>label{flex:1 1 150px;margin:6px 0 12px}
+.schedule-day summary{font-size:.9rem;color:#2257b1;cursor:pointer;font-weight:600;padding:10px 0}
+.schedule-day details label{margin:10px 0}
+textarea{width:100%;resize:vertical;font:inherit;border:1px solid #ccd6e2;background:white;border-radius:10px;padding:12px;margin-top:6px;min-height:105px}
+.weekrow{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:9px 0;border-bottom:1px solid #e8edf4;font-size:.88rem}
+.weekrow:last-child{border-bottom:0}
+.weekrow span{color:#526174;text-align:right}
+.weekrow.today strong{color:#2563eb}
+@media(max-width:380px){main{padding:14px}.row{flex-wrap:wrap}nav{margin:18px 0}}
