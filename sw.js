@@ -1,6 +1,6 @@
 // Versioned, network-first PWA cache. Refresh the shell after every deployment.
-const CACHE='workout-tracker-phase4-v1';
-const SHELL=['./','./index.html','./style.css?v=4','./app.js?v=4'];
+const CACHE='workout-tracker-phase5-v1';
+const SHELL=['./','./index.html','./style.css?v=5','./app.js?v=5'];
 self.addEventListener('install',event=>{
   event.waitUntil(caches.open(CACHE).then(cache=>cache.addAll(SHELL)).then(()=>self.skipWaiting()));
 });

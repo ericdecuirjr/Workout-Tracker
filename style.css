@@ -42,3 +42,6 @@ textarea{width:100%;resize:vertical;font:inherit;border:1px solid #ccd6e2;backgr
 /* Keep every tab visible on phone screens (no horizontal nav scrolling). */
 nav{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;overflow:visible}
 nav button{min-width:0;white-space:normal;line-height:1.18;padding:10px 6px;font-size:.84rem}
+
+/* Phase 5: Capacitor native safe-area support */
+@supports (padding: env(safe-area-inset-bottom)) { body { padding-bottom: env(safe-area-inset-bottom); } main { padding-top: max(16px, env(safe-area-inset-top)); } }
