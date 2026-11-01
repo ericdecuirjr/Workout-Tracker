@@ -20,3 +20,25 @@ textarea{width:100%;resize:vertical;font:inherit;border:1px solid #ccd6e2;backgr
 .weekrow span{color:#526174;text-align:right}
 .weekrow.today strong{color:#2563eb}
 @media(max-width:380px){main{padding:14px}.row{flex-wrap:wrap}nav{margin:18px 0}}
+
+/* Phase 4 power-cycle interface */
+#power .card:first-of-type{margin-top:14px}
+.small-action{padding:9px 13px;font-size:.85rem;margin:0 0 8px}
+#power .row>button{flex:1;min-width:0}
+#power .row>.primary{width:auto;margin-top:0}
+#power .row{flex-wrap:wrap}
+#power button:disabled{opacity:.46;cursor:default}
+.power-kpis{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.power-kpis strong{display:block;font-size:1.3rem;color:#2059a7}
+.power-kpis span{display:block;font-size:.78rem;color:#637083;margin-top:3px}
+.progress-track{height:9px;background:#e3ebf5;border-radius:8px;overflow:hidden;margin-top:14px}
+.progress-track>div{height:100%;background:#2563eb;border-radius:8px;width:0%;transition:width .2s}
+.phase-label{font-weight:700;color:#172334;margin:2px 0 0}
+.weekchips{display:flex;flex-wrap:wrap;gap:7px;margin-top:14px}
+.weekchips button{font-size:.81rem;padding:9px 12px;flex:1 1 70px}
+.weekchips button.selected{background:#2563eb;border-color:#2563eb;color:white}
+.completion{width:100%;background:#eff5ff;border-color:#aac7f4;color:#2059a7;margin:10px 0 4px}
+.completion.completed{background:#ecfdf5;border-color:#a7d5c2;color:#065f46}
+/* Keep every tab visible on phone screens (no horizontal nav scrolling). */
+nav{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;overflow:visible}
+nav button{min-width:0;white-space:normal;line-height:1.18;padding:10px 6px;font-size:.84rem}

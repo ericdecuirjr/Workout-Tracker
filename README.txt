@@ -1,36 +1,50 @@
-Workout Tracker Phase 3 — flexible weekly training plan
+Workout Tracker — Phase 4: Eight-Week Strength + Power Cycle
+Compatible with Phase 3 custom workout schedules and previously saved workout history.
 
-NEW
-- Set 1–7 training days per week.
-- Pick which weekdays you train, and assign workout types (Push, Pull, Legs,
-  Upper, Lower, Full Body, Conditioning, Mobility, or Custom).
-- Edit the exercises and prescribed sets/reps for each day.
-- See your weekly schedule on the Dashboard.
-- Backups now include your workout schedule as well as logged sets.
+WHAT IS NEW
+* New "8-Week Power" tab, alongside your existing custom "Plan" tab.
+* Eight-week cycle with four phases:
+  - Weeks 1–2: Foundation and technique
+  - Weeks 3–4: Maximum strength
+  - Week 5: Deload (reduced volume)
+  - Weeks 6–8: Explosive power
+* Three primary sessions: Monday lower body, Wednesday upper body, Friday total body.
+* Optional recovery / mobility on Tuesday and Thursday.
+* Each week has specific exercise prescriptions, with quick links to form videos.
+* Select a Week 1 start date. The app displays the current week automatically,
+  and lets you preview any week and session.
+* Mark primary sessions complete and track progress out of 24 sessions.
+* Activate or leave the cycle without changing your saved custom weekly plan.
+* Cycle settings and completed sessions are included in your JSON backups.
+* Versioned assets and a new service worker help the installed app refresh after updates.
 
-HOW TO UPDATE ON YOUR GALAXY USING GITHUB
-1. In the current tracker, open History > Backup JSON, and save a backup.
-2. Unzip this package. From your GitHub repository on your phone, upload
-   index.html, app.js, and style.css to the ROOT of the same repository,
-   replacing the old versions. The included README.txt is optional.
-   Do not upload only the ZIP.
-3. Wait until GitHub Pages completes deployment. Reopen your existing app.
-   If you still see the old version, refresh it or close and reopen your
-   installed shortcut.
-4. Open Plan. Choose how many training days you want, set the weekdays and
-   workout types, optionally expand 'Edit workout exercises', then tap
-   'Save weekly plan'. The Dashboard displays the saved weekly schedule.
-5. For Custom workouts, enter your own name and list each exercise on a
-   separate line. Add a vertical bar followed by sets/reps if you want:
-   Dumbbell Bench Press | 4 x 8-12
-   Pull-up | 3 x 6-10
+INSTALL ON YOUR GALAXY (SAME GITHUB PAGES ADDRESS)
+1. IMPORTANT: Open current tracker > History > Backup JSON. Save that backup.
+2. Download and extract this ZIP on your Galaxy.
+3. In the ROOT of your existing GitHub Pages repository, update index.html,
+   app.js, and style.css; add or replace sw.js from this ZIP too.
+   Do NOT upload only the ZIP file. Leave your repository's existing
+   manifest.webmanifest, images, and other files in place.
+4. Commit the changes, then allow GitHub Pages to publish them.
+5. Close the installed tracker and reopen it. If it still shows Phase 3,
+   open the site once in Chrome, refresh, then relaunch the installed app.
+   If necessary: Settings > Apps > Workout Tracker > Storage > Clear CACHE.
+   DO NOT clear data; that could erase local workout history.
+6. Open "8-Week Power", set the start date (week begins Monday), and select
+   "Use this power cycle". The Dashboard will reflect that schedule.
+7. To return to your own program, choose "Use custom plan" or visit Plan.
 
-DATA SAFETY
-- Workout history uses the same workout-tracker-v1 storage key as Phase 2.
-  The update does not intentionally delete or change workout history.
-- Schedule settings are stored under workout-tracker-plan-v3.
-- Existing Phase 2 JSON backups can still restore workout history.
-- Data lives in the browser on the same device and site. It can be lost
-  when browser data is cleared, or if a different site URL/browser is used.
-  Export JSON backups regularly.
-- Exercise form videos require internet access.
+DATA SAFETY AND LIMITATIONS
+* Your existing sets continue to use the Phase 2/3 storage key:
+  workout-tracker-v1. They are not automatically deleted or replaced.
+* Existing custom schedules continue to use workout-tracker-plan-v3.
+* Cycle state uses a separate key: workout-tracker-power-v4.
+* Data stays on the same browser/site/device, not in a cloud account.
+* Clearing app data, changing browser, or changing website origin can lose
+  data unless you restore a previously exported JSON backup.
+* Phase 2 and Phase 3 backups remain compatible; they do not contain cycle progress.
+* Form videos require an internet connection. Log/history works offline once
+  app files are cached by the updated service worker.
+* Modify exercise selections and loads based on current capacity. For pain,
+  pause or choose a low-impact alternative; consult a qualified clinician
+  before plyometrics if you have unresolved foot/ankle or joint issues.

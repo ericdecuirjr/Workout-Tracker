@@ -1,1 +1,21 @@
-const CACHE='workout-tracker-v1';const ASSETS=['./','./index.html','./style.css','./app.js','./manifest.webmanifest','./icon.svg'];self.addEventListener('install',e=>e.waitUntil(caches.open(CACHE).then(c=>c.addAll(ASSETS))));self.addEventListener('fetch',e=>{if(e.request.method==='GET'&&new URL(e.request.url).origin===location.origin)e.respondWith(caches.match(e.request).then(r=>r||fetch(e.request)))});
+// Versioned, network-first PWA cache. Refresh the shell after every deployment.
+const CACHE='workout-tracker-phase4-v1';
+const SHELL=['./','./index.html','./style.css?v=4','./app.js?v=4'];
+self.addEventListener('install',event=>{
+  event.waitUntil(caches.open(CACHE).then(cache=>cache.addAll(SHELL)).then(()=>self.skipWaiting()));
+});
+self.addEventListener('activate',event=>{
+  event.waitUntil(caches.keys().then(names=>Promise.all(names.filter(n=>n.startsWith('workout-')&&n!==CACHE).map(n=>caches.delete(n)))).then(()=>self.clients.claim()));
+});
+self.addEventListener('fetch',event=>{
+  if(event.request.method!=='GET'||new URL(event.request.url).origin!==self.location.origin)return;
+  event.respondWith(fetch(event.request).then(response=>{
+    if(response.ok){const copy=response.clone();caches.open(CACHE).then(cache=>cache.put(event.request,copy)).catch(()=>{});}
+    return response;
+  }).catch(async()=>{
+    const cached=await caches.match(event.request);
+    if(cached)return cached;
+    if(event.request.mode==='navigate')return (await caches.match('./index.html'))||(await caches.match('./'));
+    return new Response('Offline',{status:503,statusText:'Offline'});
+  }));
+});
