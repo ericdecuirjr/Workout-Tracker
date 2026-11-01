@@ -7,7 +7,7 @@ function lastSetFor(name){
 }
 function lastSetFields(s){
   const note=String(s.notes||'');
-  const match=/^\\[(Superset|Drop set)\\]\\s*/.exec(note);
+  const match=/^\[(Superset|Drop set)\]\s*/.exec(note);
   return {weight:Number(s.weight),reps:Number(s.reps),type:match?match[1]:'Standard',notes:match?note.slice(match[0].length):note};
 }
 function updateLastSetHint(){
@@ -323,7 +323,7 @@ function renderPlan(){
       const inList=[...$('exercise').options].some(x=>x.value===name);
       $('custom').value=inList?'':name;
       if(inList)$('exercise').value=name;
-      formLink();document.querySelector('[data-tab="log"]').click();
+      updateLastSetHint();document.querySelector('[data-tab="log"]').click();
     };
     const demo=document.createElement('a');demo.textContent='Form video ↗';demo.href='https://www.youtube.com/results?search_query='+encodeURIComponent(name+' exercise proper form');
     demo.target='_blank';demo.rel='noopener noreferrer';
@@ -492,7 +492,7 @@ function renderPowerCycle(){
       const count=/(?:×|x)\s*(\d+)/.exec(prescription);
       if(count)$('reps').value=count[1];
       $('notes').value=`Power cycle · Week ${powerViewWeek} · ${day.label}`;
-      formLink();goTab('log');
+      updateLastSetHint();goTab('log');
     };
     const video=document.createElement('a');video.textContent='Form video ↗';
     video.href='https://www.youtube.com/results?search_query='+encodeURIComponent(name+' exercise proper form');video.target='_blank';video.rel='noopener noreferrer';
