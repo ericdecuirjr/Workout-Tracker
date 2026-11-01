@@ -8,6 +8,7 @@ on:
       - 'phase8.js'
       - 'phase9-core.js'
       - 'phase9.js'
+      - 'phase9.test.cjs'
       - 'style.css'
       - 'native-bridge.mjs'
       - 'native-bridge.js'
