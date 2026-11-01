@@ -178,3 +178,37 @@ a{color:#236b50}
 .phase9-card .row button{min-width:125px}
 .phase9-card .row>.primary{width:auto;margin:0}
 #progressionFeedback,#muscleFeedback,#coachFeedback{min-height:1em}
+
+/* Phase 9 navigation: five clear destinations and a secondary features tray */
+.main-nav{grid-template-columns:repeat(5,minmax(0,1fr))}
+.more-menu{display:flex;gap:10px;align-items:stretch;flex-direction:column;background:#fff;padding:16px;border:1px solid #dae5df;box-shadow:0 12px 34px rgba(16,42,28,.13);border-radius:16px;position:fixed;z-index:65;right:16px;bottom:calc(85px + env(safe-area-inset-bottom,0px));width:min(310px,calc(100% - 32px))}
+.more-menu[hidden]{display:none}
+.more-heading{font-weight:800;color:#184b39;margin:0 0 4px;font-size:.89rem}
+.more-menu button{display:flex;align-items:center;gap:12px;justify-content:flex-start;text-align:left;width:100%;min-height:50px;background:#f5f9f6;border:1px solid #e1eae3}
+.more-menu .nav-icon{height:21px;width:21px}
+.more-menu button.active{background:#e4f3e9;color:#1e6042}
+.main-nav #moreToggle.selected-destination{color:#287453;border-color:#9acbae}
+.feature-hub{background:#f7fbf8}
+.feature-hub h3{margin:0;font-size:1.1rem;color:#184b39}
+.feature-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px;margin-top:14px}
+.feature-grid button{display:flex;flex-direction:column;align-items:flex-start;gap:4px;text-align:left;background:white;border:1px solid #dbe9e2;padding:15px;min-height:78px}
+.feature-grid button strong{font-size:.87rem;color:#23583e}
+.feature-grid button span{font-size:.77rem;line-height:1.3;color:#607466;font-weight:400}
+.feature-jumps{display:flex;flex-wrap:wrap;gap:7px;margin:12px 0}
+.feature-jumps button{background:#eaf4ed;color:#23583e;border-color:#cee2d5;font-size:.82rem;padding:9px 12px}
+details.card>summary{font-weight:800;color:#205b40;cursor:pointer;list-style-position:inside;padding:3px 0;line-height:1.5}
+details.card>summary:focus-visible{outline:3px solid #8dc7a3;outline-offset:3px}
+details.card[open]>summary{padding-bottom:14px;margin-bottom:5px;border-bottom:1px solid #e4eee7}
+details.card:not([open]){padding:17px 18px}
+#planViewerAnchor{scroll-margin-top:22px}
+details.card{scroll-margin-top:22px}
+.progression-details{margin-top:12px}
+@media(max-width:600px){
+  .main-nav{display:grid;grid-template-columns:repeat(5,minmax(0,1fr))}
+  .main-nav button{font-size:.69rem;min-height:55px}
+  .main-nav button.selected-destination{background:#e4f2e9;color:#1e6748}
+  .more-menu{bottom:calc(80px + env(safe-area-inset-bottom,0px))}
+  .feature-grid button{padding:11px;min-height:70px}
+  .feature-grid button strong{font-size:.84rem}
+}
+@media(max-width:360px){.main-nav button{font-size:.65rem}.feature-grid button strong{font-size:.79rem}}
