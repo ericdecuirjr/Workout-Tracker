@@ -126,3 +126,28 @@ nav button{display:flex;align-items:center;justify-content:center;gap:7px}
 .today-entry span{color:#526174;text-align:right;white-space:nowrap}
 #undoSet[hidden]{display:none}
 @media(max-width:390px){.stepper button{min-width:36px;padding:6px}.log-form .grid{gap:9px}.today-entry{font-size:.78rem}}
+
+/* Phase 8: District Flatwater Fitness and responsive analytics */
+:root{--accent:#287453}
+header h1{color:#184b39;font-size:clamp(1.65rem,5vw,2.3rem)}
+.eyebrow{color:#287453}
+button.active,.primary,.weekchips button.selected{background:#287453;border-color:#287453;color:#fff}
+.stat strong,.power-kpis strong{color:#287453}
+a{color:#236b50}
+.phase8-card h3{font-size:1rem;margin:24px 0 10px}
+.phase8-card .stats{margin:14px 0}
+.insight-stat small{display:block;font-size:.75rem;line-height:1.3;color:#627384;margin-top:8px}
+.insight-stat strong{font-size:1.4rem}
+.insights-table{width:100%;border-collapse:collapse;font-size:.85rem}
+.insights-table td,.insights-table th{padding:10px 7px;text-align:right;border-bottom:1px solid #e6edf0}
+.insights-table td:first-child,.insights-table th:first-child{text-align:left}
+.table-scroll{overflow-x:auto}
+.ai-card textarea{min-height:75px}
+.ai-card #aiPrompt,.ai-card #aiResponseInput{font-family:ui-monospace,monospace;font-size:.78rem;line-height:1.5}
+.ai-card .ai-actions>.primary{margin:0;width:auto}
+.ai-card button:disabled{opacity:.45;cursor:not-allowed}
+.ai-preview-day{padding:12px 0;border-bottom:1px solid #dfe8e3}
+.ai-preview-day p{color:#56647a;font-size:.85rem;line-height:1.5;overflow-wrap:anywhere}
+#aiStatus{min-height:1.3em}
+@media(max-width:600px){nav button.active{background:#e4f2e9;color:#1e6748}.phase8-card .stats{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:390px){.ai-card .grid{flex-wrap:wrap}.ai-card .grid>label{flex:1 1 130px}}
