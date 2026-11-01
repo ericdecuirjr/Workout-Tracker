@@ -1,0 +1,111 @@
+name: Build Workout Tracker APK
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - 'index.html'
+      - 'app.js'
+      - 'style.css'
+      - 'native-bridge.mjs'
+      - 'native-bridge.js'
+      - 'build-web.mjs'
+      - 'capacitor.config.json'
+      - 'package.json'
+      - 'manifest.webmanifest'
+      - 'icon-source.png'
+      - 'icon-192.png'
+      - 'icon-512.png'
+      - '.github/workflows/android-apk.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  build-android:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Set up Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '21'
+      - name: Set up Android SDK
+        uses: android-actions/setup-android@v3
+      - name: Install JS dependencies
+        run: npm install --no-audit --no-fund
+      - name: Prepare bundled offline app
+        run: npm run build:web
+      - name: Generate Android native project
+        run: npx cap add android
+      - name: Sync Android plugins
+        run: npx cap sync android
+      - name: Generate custom Android icon
+        run: |
+          mkdir -p assets
+          cp icon-source.png assets/icon.png
+          npx capacitor-assets generate --android --iconBackgroundColor '#2563eb' --splashBackgroundColor '#f8fafc'
+      - name: Build installable debug APK
+        run: |
+          chmod +x android/gradlew
+          cd android
+          ./gradlew --no-daemon assembleDebug
+      - name: Upload debug APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: WorkoutTracker-Debug-APK
+          path: android/app/build/outputs/apk/debug/app-debug.apk
+          if-no-files-found: error
+          retention-days: 30
+      - name: Optionally build signed release APK
+        env:
+          APK_KEYSTORE_BASE64: ${{ secrets.APK_KEYSTORE_BASE64 }}
+          APK_STORE_PASSWORD: ${{ secrets.APK_STORE_PASSWORD }}
+          APK_KEY_ALIAS: ${{ secrets.APK_KEY_ALIAS }}
+          APK_KEY_PASSWORD: ${{ secrets.APK_KEY_PASSWORD }}
+        shell: bash
+        run: |
+          if [[ -z "$APK_KEYSTORE_BASE64" || -z "$APK_STORE_PASSWORD" || -z "$APK_KEY_ALIAS" || -z "$APK_KEY_PASSWORD" ]]; then
+            echo 'No release signing secrets set. Debug APK is available. Use a stable signing key for upgrades.'
+            exit 0
+          fi
+          KEYFILE="$RUNNER_TEMP/workout-tracker-release.jks"
+          printf '%s' "$APK_KEYSTORE_BASE64" | base64 --decode > "$KEYFILE"
+          export ANDROID_KEYSTORE_PATH="$KEYFILE"
+          export ANDROID_KEYSTORE_PASSWORD="$APK_STORE_PASSWORD"
+          export ANDROID_KEY_ALIAS="$APK_KEY_ALIAS"
+          export ANDROID_KEY_PASSWORD="$APK_KEY_PASSWORD"
+          # Configure Android Gradle Plugin signing without storing secrets in the repository.
+          cat >> android/app/build.gradle <<'GRADLE'
+
+          android {
+            signingConfigs {
+              create('workoutRelease') {
+                storeFile file(System.getenv('ANDROID_KEYSTORE_PATH'))
+                storePassword System.getenv('ANDROID_KEYSTORE_PASSWORD')
+                keyAlias System.getenv('ANDROID_KEY_ALIAS')
+                keyPassword System.getenv('ANDROID_KEY_PASSWORD')
+              }
+            }
+            buildTypes {
+              release {
+                signingConfig signingConfigs.workoutRelease
+              }
+            }
+          }
+          GRADLE
+          cd android
+          ./gradlew --no-daemon assembleRelease
+      - name: Upload signed release APK (if configured)
+        uses: actions/upload-artifact@v4
+        with:
+          name: WorkoutTracker-Signed-Release-APK
+          path: android/app/build/outputs/apk/release/app-release.apk
+          if-no-files-found: ignore
+          retention-days: 30
