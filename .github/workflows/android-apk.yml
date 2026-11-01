@@ -8,6 +8,7 @@ on:
       - 'phase8.js'
       - 'phase9-core.js'
       - 'phase9.js'
+      - 'phase9-nav.js'
       - 'phase9.test.cjs'
       - 'style.css'
       - 'native-bridge.mjs'
@@ -50,6 +51,7 @@ jobs:
           node --check phase8.js
           node --check phase9-core.js
           node --check phase9.js
+          node --check phase9-nav.js
           node phase9.test.cjs
       - name: Prepare bundled offline app
         run: npm run build:web
