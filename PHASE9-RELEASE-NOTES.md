@@ -24,3 +24,20 @@
 - [ ] In Plan, verify no history included by default; opt in, refresh, copy the prompt and inspect the manual ChatGPT JSON import flow.
 
 **Interpretation:** Training recommendations are suggestions only, not measured bar speed, fatigue, or medical clearance. Weights assume consistent logging units in pounds.
+
+## Simplified navigation and feature discovery (additional Phase 9 polish)
+- Five main bottom destinations: **Home**, **Log**, **Plan**, **Trends**, **More**.
+- **More** holds both previously existing Power Cycle and History/Backup screens; nothing is removed.
+- **Home** adds shortcuts directly to logging, your weekly workouts, coaching, muscle analytics, power and backups.
+- Plan shows the workout list near the top. Advanced sections (edit schedule, AI coaching, AI plan generator) collapse until opened.
+- Trends has section jump chips and expandable strength, muscle group and exercise-level chart sections.
+- The Log screen keeps quick logging prominent with progressive-overload suggestions in an expandable panel.
+- Navigation supports escape to dismiss More, keyboard focus, and the existing in-app shortcuts. No storage keys, exercise records, APK app ID or release-signing settings are changed.
+- A dedicated navigation regression test checks deep links, unique DOM IDs, and bundled assets. Device QA should still check Galaxy tap targets and keyboard behavior.
+
+### Manual navigation QA
+1. Check each bottom destination and More menu; open/close More and verify Power and History.
+2. From Home open each shortcut; confirm it opens the intended screen/section.
+3. Expand the plan editor, make a change and save; expand AI review/generator without losing draft input.
+4. Verify log-from-plan and log-from-power shortcuts, charts, back-up export, restore, and rest timer still work.
+5. Rotate the device, use keyboard, change display size, and check the bottom bar doesn't overlap important buttons.
