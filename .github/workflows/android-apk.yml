@@ -9,6 +9,7 @@ on:
       - 'phase9-core.js'
       - 'phase9.js'
       - 'phase9-nav.js'
+      - 'phase9-nav.test.cjs'
       - 'phase9.test.cjs'
       - 'style.css'
       - 'native-bridge.mjs'
@@ -53,6 +54,7 @@ jobs:
           node --check phase9.js
           node --check phase9-nav.js
           node phase9.test.cjs
+          node phase9-nav.test.cjs
       - name: Prepare bundled offline app
         run: npm run build:web
       - name: Generate Android native project
