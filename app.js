@@ -1,4 +1,144 @@
-const exercises=['Bench Press','Dumbbell Press','Squat','Deadlift','Dumbbell Row','Lat Pulldown','Pull-up','Overhead Press','Biceps Curl','Triceps Pushdown','Lunge','Kettlebell Swing','Push-up','Cable Row','Goblet Squat','Dumbbell Romanian Deadlift','Bulgarian Split Squat','Cable Chest Fly','Incline Dumbbell Press','Dumbbell Lateral Raise','Face Pull','Cable Lateral Raise','Cable Curl','Hammer Curl','Overhead Triceps Extension','Triceps Dip','Hanging Knee Raise','Plank','Kettlebell Goblet Squat','Kettlebell Clean and Press','Single-leg Romanian Deadlift','Calf Raise','Reverse Fly','Cable Wood Chop','Jump Squat','Dumbbell Push Press','Explosive Incline Push-up','Lateral Bound','Dumbbell Step-up','Cable Rotational Punch','Hip Flexor Stretch','Thoracic Rotation','Shoulder Mobility','Bodyweight Squat','Fast Calf Raise','Dumbbell Squat','Dumbbell Bench Press'];const $=id=>document.getElementById(id);const key='workout-tracker-v1';let sets=[];try{sets=JSON.parse(localStorage.getItem(key)||'[]')}catch{};if(!Array.isArray(sets))sets=[];const save=()=>localStorage.setItem(key,JSON.stringify(sets));function choices(){const all=[...new Set([...exercises,...sets.map(s=>s.exercise)])].sort();for(const id of ['exercise','chartExercise']){const old=$(id).value;$(id).innerHTML=all.map(x=>`<option value="${escapeHtml(x)}">${escapeHtml(x)}</option>`).join('');if(all.includes(old))$(id).value=old}}function escapeHtml(s){return String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}function formLink(){const ex=$('custom').value.trim()||$('exercise').value;$('formlink').href='https://www.youtube.com/results?search_query='+encodeURIComponent(ex+' exercise proper form')}choices();formLink();$('exercise').onchange=formLink;$('custom').oninput=formLink;$('form').onsubmit=e=>{e.preventDefault();const exercise=$('custom').value.trim()||$('exercise').value;const weight=Number($('weight').value),reps=Number($('reps').value);if(!exercise||!Number.isFinite(weight)||weight<0||!Number.isInteger(reps)||reps<1)return;sets.push({id:Date.now()+Math.random(),date:new Date().toISOString(),exercise,weight,reps,notes:($('setType').value==='Standard'?'':`[${$('setType').value}] `)+$('notes').value.trim()});save();$('notes').value='';$('custom').value='';choices();formLink();alert('Set saved!')};document.querySelectorAll('[data-tab]').forEach(b=>b.onclick=()=>{document.querySelectorAll('[data-tab]').forEach(x=>x.classList.toggle('active',x===b));['dashboard','plan','power','log','history','progress'].forEach(id=>$(id).hidden=id!==b.dataset.tab);if(b.dataset.tab==='dashboard'){renderDashboard();renderWeeklySchedule()};if(b.dataset.tab==='power')renderPowerCycle();if(b.dataset.tab==='history')renderHistory();if(b.dataset.tab==='progress')draw()});function renderHistory(){$('entries').innerHTML=sets.length?'':'<p>No sets logged yet.</p>';[...sets].reverse().forEach(s=>{const a=document.createElement('article');const title=document.createElement('strong');title.textContent=s.exercise+' — '+s.weight+' lb × '+s.reps;const small=document.createElement('small');small.textContent=new Date(s.date).toLocaleString()+(s.notes?' · '+s.notes:'');const del=document.createElement('button');del.textContent='Delete';del.onclick=()=>{if(confirm('Delete this set?')){sets=sets.filter(x=>x.id!==s.id);save();renderHistory();choices()}};a.append(del,title,document.createElement('br'),small);$('entries').append(a)})}function draw(){const c=$('chart'),ctx=c.getContext('2d'),data=sets.filter(s=>s.exercise===$('chartExercise').value).sort((a,b)=>a.date.localeCompare(b.date));ctx.clearRect(0,0,c.width,c.height);ctx.fillStyle='#526174';ctx.font='17px sans-serif';if(!data.length){ctx.fillText('Log sets to see your progress.',30,65);$('summary').textContent='';return}const metric=$('metric').value;const values=data.map(x=>metric==='volume'?x.weight*x.reps:metric==='estimated'?x.weight*(1+x.reps/30):x.weight);const weights=values,min=Math.min(...weights),max=Math.max(...weights),lo=Math.max(0,min-5),hi=max+5;ctx.strokeStyle='#dce3ed';for(let i=0;i<=4;i++){let y=260-i*50;ctx.beginPath();ctx.moveTo(55,y);ctx.lineTo(610,y);ctx.stroke();ctx.fillText((lo+(hi-lo)*i/4).toFixed(0),12,y+5)}ctx.strokeStyle='#2563eb';ctx.lineWidth=3;ctx.beginPath();data.forEach((s,i)=>{const x=65+(data.length===1?0:i*530/(data.length-1)),y=260-(values[i]-lo)/(hi-lo)*200;i?ctx.lineTo(x,y):ctx.moveTo(x,y)});ctx.stroke();ctx.fillStyle='#2563eb';data.forEach((s,i)=>{const x=65+(data.length===1?0:i*530/(data.length-1)),y=260-(values[i]-lo)/(hi-lo)*200;ctx.beginPath();ctx.arc(x,y,5,0,Math.PI*2);ctx.fill()});$('summary').textContent=data.length+' sets · Best '+metric+': '+max.toFixed(1)+' · Latest: '+values[values.length-1].toFixed(1)}$('chartExercise').onchange=draw;$('metric').onchange=draw;$('export').onclick=()=>{const rows=[['Date','Exercise','Weight (lb)','Reps','Notes'],...sets.map(s=>[s.date,s.exercise,s.weight,s.reps,s.notes])];const csv=rows.map(r=>r.map(v=>'"'+String(v).replace(/"/g,'""')+'"').join(',')).join('\r\n');saveExportFile('workout-history.csv',csv,'text/csv')};let duration=90,remaining=90,interval=null;function clock(){const m=Math.floor(remaining/60),s=remaining%60;$('clock').textContent=String(m).padStart(2,'0')+':'+String(s).padStart(2,'0')}function pause(){clearInterval(interval);interval=null}document.querySelectorAll('[data-seconds]').forEach(b=>b.onclick=()=>{pause();duration=remaining=Number(b.dataset.seconds);clock()});$('start').onclick=()=>{if(interval){pause();return}if(remaining<=0)remaining=duration;interval=setInterval(()=>{remaining--;clock();if(remaining<=0){pause();navigator.vibrate?.([250,150,250]);alert('Rest complete!')}},1000)};$('reset').onclick=()=>{pause();remaining=duration;clock()};clock();if('serviceWorker'in navigator&&location.protocol==='https:'&&location.hostname!=='localhost')navigator.serviceWorker.register('./sw.js').catch(()=>{});
+const exercises=['Bench Press','Dumbbell Press','Squat','Deadlift','Dumbbell Row','Lat Pulldown','Pull-up','Overhead Press','Biceps Curl','Triceps Pushdown','Lunge','Kettlebell Swing','Push-up','Cable Row','Goblet Squat','Dumbbell Romanian Deadlift','Bulgarian Split Squat','Cable Chest Fly','Incline Dumbbell Press','Dumbbell Lateral Raise','Face Pull','Cable Lateral Raise','Cable Curl','Hammer Curl','Overhead Triceps Extension','Triceps Dip','Hanging Knee Raise','Plank','Kettlebell Goblet Squat','Kettlebell Clean and Press','Single-leg Romanian Deadlift','Calf Raise','Reverse Fly','Cable Wood Chop','Jump Squat','Dumbbell Push Press','Explosive Incline Push-up','Lateral Bound','Dumbbell Step-up','Cable Rotational Punch','Hip Flexor Stretch','Thoracic Rotation','Shoulder Mobility','Bodyweight Squat','Fast Calf Raise','Dumbbell Squat','Dumbbell Bench Press'];const $=id=>document.getElementById(id);const key='workout-tracker-v1';let sets=[];try{sets=JSON.parse(localStorage.getItem(key)||'[]')}catch{};if(!Array.isArray(sets))sets=[];const save=()=>localStorage.setItem(key,JSON.stringify(sets));function choices(){const all=[...new Set([...exercises,...sets.map(s=>s.exercise)])].sort();for(const id of ['exercise','chartExercise']){const old=$(id).value;$(id).innerHTML=all.map(x=>`<option value="${escapeHtml(x)}">${escapeHtml(x)}</option>`).join('');if(all.includes(old))$(id).value=old}}function escapeHtml(s){return String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}function formLink(){const ex=$('custom').value.trim()||$('exercise').value;$('formlink').href='https://www.youtube.com/results?search_query='+encodeURIComponent(ex+' exercise proper form')}// Phase 7 quick logging keeps workout-tracker-v1 and the existing set record schema intact.
+let lastSavedId=null;
+function selectedExercise(){return $('custom').value.trim()||$('exercise').value}
+function lastSetFor(name){
+  for(let i=sets.length-1;i>=0;i--){if(sets[i].exercise===name)return sets[i]}
+  return null;
+}
+function lastSetFields(s){
+  const note=String(s.notes||'');
+  const match=/^\\[(Superset|Drop set)\\]\\s*/.exec(note);
+  return {weight:Number(s.weight),reps:Number(s.reps),type:match?match[1]:'Standard',notes:match?note.slice(match[0].length):note};
+}
+function updateLastSetHint(){
+  const s=lastSetFor(selectedExercise());
+  $('useLastSet').disabled=!s;
+  $('repeatLastSet').disabled=!s;
+  $('lastSetHint').textContent=s?'Last logged: '+Number(s.weight)+' lb × '+Number(s.reps)+' reps · '+new Date(s.date).toLocaleDateString():'No prior sets for this exercise.';
+  formLink();
+}
+function populateFromLast(){
+  const s=lastSetFor(selectedExercise());if(!s)return false;
+  const values=lastSetFields(s);
+  if(!Number.isFinite(values.weight)||values.weight<0||!Number.isInteger(values.reps)||values.reps<1)return false;
+  $('weight').value=values.weight;
+  $('reps').value=values.reps;
+  $('setType').value=values.type;
+  $('notes').value=values.notes;
+  return true;
+}
+function renderRecentExercises(){
+  const target=$('recentExercises');target.replaceChildren();
+  const seen=new Set();const recent=[];
+  for(let i=sets.length-1;i>=0&&recent.length<5;i--){
+    const name=sets[i].exercise;
+    if(typeof name!=='string'||seen.has(name))continue;
+    seen.add(name);recent.push(name);
+  }
+  if(!recent.length){const p=document.createElement('p');p.className='help';p.textContent='Your recent exercises will appear here.';target.append(p);return}
+  recent.forEach(name=>{
+    const button=document.createElement('button');button.type='button';button.className='recent-chip';
+    button.textContent=name;
+    button.onclick=()=>{
+      const found=[...$('exercise').options].some(option=>option.value===name);
+      $('custom').value=found?'':name;
+      if(found)$('exercise').value=name;
+      populateFromLast();updateLastSetHint();
+    };
+    target.append(button);
+  });
+}
+function renderTodaySets(){
+  const today=localDay(new Date());
+  const todayRecords=sets.filter(s=>localDay(s.date)===today);
+  $('todayCount').textContent=todayRecords.length+' set'+(todayRecords.length===1?'':'s')+' today';
+  const target=$('todaySets');target.replaceChildren();
+  if(!todayRecords.length){const p=document.createElement('p');p.className='help';p.textContent='No sets logged today.';target.append(p);return}
+  todayRecords.slice(-8).reverse().forEach(s=>{
+    const entry=document.createElement('div');entry.className='today-entry';
+    const title=document.createElement('strong');title.textContent=s.exercise;
+    const detail=document.createElement('span');detail.textContent=Number(s.weight)+' lb × '+Number(s.reps)+' reps';
+    entry.append(title,detail);target.append(entry);
+  });
+}
+function refreshQuickLog(){
+  choices();renderTodaySets();renderRecentExercises();updateLastSetHint();renderDashboard();
+}
+function setLogFeedback(message,isError=false){
+  $('logFeedback').textContent=message;
+  $('logFeedback').classList.toggle('error',isError);
+}
+function saveQuickSet(exercise,weight,reps,type,notes){
+  if(!exercise||!Number.isFinite(weight)||weight<0||!Number.isInteger(reps)||reps<1){
+    setLogFeedback('Enter a valid exercise, weight, and whole-number reps.',true);return false;
+  }
+  const record={id:Date.now()+Math.random(),date:new Date().toISOString(),exercise,weight,reps,notes:(type==='Standard'?'':'['+type+'] ')+notes};
+  // Do not alter in-memory history unless the persistent write succeeds.
+  const updated=sets.concat(record);
+  try{localStorage.setItem(key,JSON.stringify(updated));}
+  catch(err){setLogFeedback('Set not saved. Check your device storage or export a backup.',true);return false}
+  sets=updated;lastSavedId=record.id;
+  $('undoSet').hidden=false;
+  refreshQuickLog();
+  setLogFeedback('Saved '+weight+' lb × '+reps+' reps. Ready for your next set.');
+  if($('autoRest').checked){
+    pause();remaining=duration;clock();startRest();
+  }
+  return true;
+}
+choices();formLink();
+$('exercise').onchange=()=>{if(!$('custom').value.trim())populateFromLast();updateLastSetHint()};
+$('custom').oninput=updateLastSetHint;
+$('custom').addEventListener('change',()=>{if($('custom').value.trim())populateFromLast();updateLastSetHint()});
+$('useLastSet').onclick=()=>{if(populateFromLast())setLogFeedback('Last values filled in. Adjust them or save the set.')};
+$('repeatLastSet').onclick=()=>{
+  const name=selectedExercise(),s=lastSetFor(name);
+  if(!s)return;
+  const values=lastSetFields(s);
+  if(saveQuickSet(name,values.weight,values.reps,values.type,values.notes)){
+    $('weight').value=values.weight;$('reps').value=values.reps;
+    $('setType').value=values.type;$('notes').value=values.notes;
+  }
+};
+$('form').onsubmit=e=>{
+  e.preventDefault();
+  const ok=saveQuickSet(selectedExercise(),Number($('weight').value),Number($('reps').value),$('setType').value,$('notes').value.trim());
+  if(ok){
+    $('notes').value='';
+    // Keep the chosen exercise and values for the next set.
+  }
+};
+document.querySelectorAll('[data-adjust]').forEach(b=>b.onclick=()=>{
+  const field=$(b.dataset.adjust),delta=Number(b.dataset.delta),current=Number(field.value);
+  const lower=field.id==='reps'?1:0;
+  field.value=String(Math.max(lower,(Number.isFinite(current)?current:lower)+delta));
+});
+$('undoSet').onclick=()=>{
+  if(lastSavedId===null)return;
+  const updated=sets.filter(s=>s.id!==lastSavedId);
+  if(updated.length===sets.length){lastSavedId=null;$('undoSet').hidden=true;return}
+  try{localStorage.setItem(key,JSON.stringify(updated))}
+  catch(err){setLogFeedback('Could not undo; storage is unavailable.',true);return}
+  sets=updated;lastSavedId=null;$('undoSet').hidden=true;
+  refreshQuickLog();setLogFeedback('Last saved set removed.');
+};
+renderTodaySets();renderRecentExercises();updateLastSetHint();document.querySelectorAll('[data-tab]').forEach(b=>b.onclick=()=>{document.querySelectorAll('[data-tab]').forEach(x=>x.classList.toggle('active',x===b));['dashboard','plan','power','log','history','progress'].forEach(id=>$(id).hidden=id!==b.dataset.tab);if(b.dataset.tab==='dashboard'){renderDashboard();renderWeeklySchedule()};if(b.dataset.tab==='power')renderPowerCycle();if(b.dataset.tab==='history')renderHistory();if(b.dataset.tab==='progress')draw()});function renderHistory(){$('entries').innerHTML=sets.length?'':'<p>No sets logged yet.</p>';[...sets].reverse().forEach(s=>{const a=document.createElement('article');const title=document.createElement('strong');title.textContent=s.exercise+' — '+s.weight+' lb × '+s.reps;const small=document.createElement('small');small.textContent=new Date(s.date).toLocaleString()+(s.notes?' · '+s.notes:'');const del=document.createElement('button');del.textContent='Delete';del.onclick=()=>{if(confirm('Delete this set?')){sets=sets.filter(x=>x.id!==s.id);save();renderHistory();refreshQuickLog()}};a.append(del,title,document.createElement('br'),small);$('entries').append(a)})}function draw(){const c=$('chart'),ctx=c.getContext('2d'),data=sets.filter(s=>s.exercise===$('chartExercise').value).sort((a,b)=>a.date.localeCompare(b.date));ctx.clearRect(0,0,c.width,c.height);ctx.fillStyle='#526174';ctx.font='17px sans-serif';if(!data.length){ctx.fillText('Log sets to see your progress.',30,65);$('summary').textContent='';return}const metric=$('metric').value;const values=data.map(x=>metric==='volume'?x.weight*x.reps:metric==='estimated'?x.weight*(1+x.reps/30):x.weight);const weights=values,min=Math.min(...weights),max=Math.max(...weights),lo=Math.max(0,min-5),hi=max+5;ctx.strokeStyle='#dce3ed';for(let i=0;i<=4;i++){let y=260-i*50;ctx.beginPath();ctx.moveTo(55,y);ctx.lineTo(610,y);ctx.stroke();ctx.fillText((lo+(hi-lo)*i/4).toFixed(0),12,y+5)}ctx.strokeStyle='#2563eb';ctx.lineWidth=3;ctx.beginPath();data.forEach((s,i)=>{const x=65+(data.length===1?0:i*530/(data.length-1)),y=260-(values[i]-lo)/(hi-lo)*200;i?ctx.lineTo(x,y):ctx.moveTo(x,y)});ctx.stroke();ctx.fillStyle='#2563eb';data.forEach((s,i)=>{const x=65+(data.length===1?0:i*530/(data.length-1)),y=260-(values[i]-lo)/(hi-lo)*200;ctx.beginPath();ctx.arc(x,y,5,0,Math.PI*2);ctx.fill()});$('summary').textContent=data.length+' sets · Best '+metric+': '+max.toFixed(1)+' · Latest: '+values[values.length-1].toFixed(1)}$('chartExercise').onchange=draw;$('metric').onchange=draw;$('export').onclick=()=>{const rows=[['Date','Exercise','Weight (lb)','Reps','Notes'],...sets.map(s=>[s.date,s.exercise,s.weight,s.reps,s.notes])];const csv=rows.map(r=>r.map(v=>'"'+String(v).replace(/"/g,'""')+'"').join(',')).join('\r\n');saveExportFile('workout-history.csv',csv,'text/csv')};let duration=90,remaining=90,interval=null;function clock(){const m=Math.floor(remaining/60),s=remaining%60;$('clock').textContent=String(m).padStart(2,'0')+':'+String(s).padStart(2,'0')}function pause(){clearInterval(interval);interval=null}document.querySelectorAll('[data-seconds]').forEach(b=>b.onclick=()=>{pause();duration=remaining=Number(b.dataset.seconds);clock();$('start').textContent='Start rest';$('restStatus').textContent='Rest timer set to '+duration+' seconds.'});function startRest(){
+  if(interval)return;
+  if(remaining<=0)remaining=duration;
+  $('restStatus').textContent='Rest period in progress.';
+  $('start').textContent='Pause rest';
+  interval=setInterval(()=>{
+    remaining--;clock();
+    if(remaining<=0){
+      pause();$('start').textContent='Start rest';
+      $('restStatus').textContent='Rest complete. Ready for your next set!';
+      navigator.vibrate?.([250,150,250]);
+    }
+  },1000);
+}
+$('start').onclick=()=>{if(interval){pause();$('start').textContent='Resume rest';$('restStatus').textContent='Rest paused.';return}startRest()};
+$('reset').onclick=()=>{pause();remaining=duration;clock();$('start').textContent='Start rest';$('restStatus').textContent='Rest timer is ready.'};
+clock();if('serviceWorker'in navigator&&location.protocol==='https:'&&location.hostname!=='localhost')navigator.serviceWorker.register('./sw.js').catch(()=>{});
 function localDay(date){const d=new Date(date);return Number.isNaN(d.getTime())?'':`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`}
 function startOfWeek(d){const x=new Date(d.getFullYear(),d.getMonth(),d.getDate());x.setDate(x.getDate()-(x.getDay()+6)%7);return x}
 function renderDashboard(){
@@ -226,7 +366,7 @@ $('restore').onchange=async e=>{
     if(restoredPlan){planState=restoredPlan;draftPlan=JSON.parse(JSON.stringify(planState));renderEditor();renderPlan();}
     if(restoredPower)powerState=restoredPower;
     renderPowerCycle();renderWeeklySchedule();
-    choices();renderHistory();renderDashboard();
+    lastSavedId=null;$('undoSet').hidden=true;refreshQuickLog();renderHistory();
     alert('Backup restored.');
   }catch(err){alert('Could not restore backup: '+err.message);}
   finally{e.target.value='';}
