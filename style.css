@@ -158,3 +158,23 @@ a{color:#236b50}
 .launch-brand-inner strong{font-size:clamp(1.6rem,6vw,2.25rem);letter-spacing:-.03em}
 .launch-brand-inner span{color:#526d60;font-size:.95rem}
 .launch-mark{display:grid;place-items:center;width:88px;height:88px;border-radius:24px;background:#287453;color:#fff;font-size:2rem;font-weight:800;letter-spacing:-.07em}
+
+/* Phase 9: transparent training signals and user-controlled coaching */
+.phase9-card{border-color:#dbe9e2}
+.phase9-card h3{font-size:1rem;margin:23px 0 12px}
+.phase9-advice{line-height:1.55;background:#eff7f1;padding:13px;border-radius:10px;color:#234e3a;font-size:.92rem}
+#progressionRecommendation{display:block;margin:12px 0;color:#216345}
+#progressionApply{width:100%;background:#e5f3e9;color:#225a41;border-color:#b9d6c4}
+#progressionApply:disabled{opacity:.5}
+.muscle-row{margin:13px 0}
+.muscle-row-label{display:flex;justify-content:space-between;align-items:baseline;gap:8px;font-size:.85rem}
+.muscle-row-label span{color:#566b60;text-align:right;font-variant-numeric:tabular-nums}
+.muscle-track{background:#eaf0ed;border-radius:10px;height:11px;margin-top:7px;overflow:hidden}
+.muscle-fill{background:#318366;border-radius:10px;height:100%}
+.phase9-optin{display:flex;align-items:flex-start;gap:11px;line-height:1.4}
+.phase9-optin input{width:20px;height:20px;min-height:20px;flex-shrink:0;margin:1px 0;accent-color:#287453}
+#coachPrompt{font-family:ui-monospace,monospace;font-size:.79rem;line-height:1.5}
+.phase9-card .row{flex-wrap:wrap}
+.phase9-card .row button{min-width:125px}
+.phase9-card .row>.primary{width:auto;margin:0}
+#progressionFeedback,#muscleFeedback,#coachFeedback{min-height:1em}
