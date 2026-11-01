@@ -41,6 +41,10 @@ jobs:
         uses: android-actions/setup-android@v4
       - name: Install JS dependencies
         run: npm install --no-audit --no-fund
+      - name: Validate JavaScript syntax
+        run: |
+          node --check app.js
+          node --check phase8.js
       - name: Prepare bundled offline app
         run: npm run build:web
       - name: Generate Android native project
