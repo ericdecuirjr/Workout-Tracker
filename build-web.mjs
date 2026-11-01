@@ -3,7 +3,7 @@ import { build } from 'esbuild';
 
 const out='www';
 mkdirSync(out,{recursive:true});
-const assets=['index.html','app.js','phase8.js','style.css','sw.js','manifest.webmanifest','icon-192.png','icon-512.png'];
+const assets=['index.html','app.js','phase8.js','phase9-core.js','phase9.js','style.css','sw.js','manifest.webmanifest','icon-192.png','icon-512.png'];
 for(const f of assets){
   if(!existsSync(f))throw Error('Missing app file: '+f);
   cpSync(f,`${out}/${f}`);
