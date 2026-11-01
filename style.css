@@ -98,3 +98,31 @@ nav button{display:flex;align-items:center;justify-content:center;gap:7px}
   button:active{transform:none}
   .progress-track>div{transition:none}
 }
+
+/* Phase 7: quick set logging */
+.log-heading,.today-header{display:flex;align-items:center;justify-content:space-between;gap:12px}
+.log-heading h2{margin:0;font-size:1.55rem}
+.today-badge{font-size:.78rem;font-weight:700;padding:8px 10px;border-radius:99px;color:#1d4ed8;background:#eaf1ff;white-space:nowrap}
+.log-form{margin-top:12px}
+.log-form>label:first-child{margin-top:0}
+.quick-exercises-card{margin-top:14px}
+.recent-exercises{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px}
+.recent-chip{font-size:.8rem;padding:10px 12px;border-radius:99px;background:#f2f6fc}
+.quick-actions{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.quick-actions button{font-size:.85rem;min-height:44px;color:#1d4ed8;background:#eff5ff;border-color:#c5d9fa}
+.quick-actions button:disabled{opacity:.45;color:#637083;cursor:not-allowed}
+.last-set-hint{margin:0 0 12px}
+.stepper{display:flex;align-items:stretch;gap:4px;margin-top:6px}
+.stepper input{min-width:0;flex:1;width:1%;text-align:center;margin-top:0;padding:10px 4px;appearance:textfield;-moz-appearance:textfield}
+.stepper input::-webkit-inner-spin-button,.stepper input::-webkit-outer-spin-button{-webkit-appearance:none;margin:0}
+.stepper button{padding:8px;min-width:42px;min-height:46px;border-radius:10px;background:#edf3fd;color:#1d4ed8}
+.log-feedback{min-height:1.3em;font-weight:600;margin:12px 0 0;color:#17643b}
+.log-feedback.error{color:#b42318}
+.auto-rest{display:flex;align-items:center;gap:11px;line-height:1.4;margin-bottom:5px}
+.auto-rest input{display:inline-block;width:21px;height:21px;min-height:21px;margin:0;flex-shrink:0;accent-color:#2563eb}
+.today-header h2{margin:0}
+.today-entry{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:11px 0;border-bottom:1px solid #e8edf4;font-size:.85rem}
+.today-entry:last-child{border-bottom:0}
+.today-entry span{color:#526174;text-align:right;white-space:nowrap}
+#undoSet[hidden]{display:none}
+@media(max-width:390px){.stepper button{min-width:36px;padding:6px}.log-form .grid{gap:9px}.today-entry{font-size:.78rem}}
