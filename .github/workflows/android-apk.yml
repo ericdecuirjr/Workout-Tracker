@@ -51,13 +51,16 @@ jobs:
           mkdir -p assets
           cp icon-source.png assets/icon.png
           npx capacitor-assets generate --android --iconBackgroundColor '#2563eb' --splashBackgroundColor '#f8fafc'
-          
-        - name: Set Android version for updates
+      
+      - name: Set Android version code
+        shell: bash
         run: |
-          grep -Eq 'versionCode[[:space:]]+[0-9]+' android/app/build.gradle
-          sed -i -E "s/versionCode[[:space:]]+[0-9]+/versionCode ${GITHUB_RUN_NUMBER}/" android/app/build.gradle
-          grep -n "versionCode" android/app/build.gradle
-          
+          VERSION_CODE=$((10000 + GITHUB_RUN_NUMBER))
+          FILE=android/app/build.gradle
+          grep -Eq '^[[:space:]]*versionCode[[:space:]]+[0-9]+' "$FILE" || { echo "versionCode missing"; exit 1; }
+          sed -i -E "s/^([[:space:]]*versionCode[[:space:]]+)[0-9]+/\1${VERSION_CODE}/" "$FILE"
+          grep -n "versionCode" "$FILE"
+      
       - name: Build installable debug APK
         run: |
           chmod +x android/gradlew
