@@ -4,6 +4,7 @@ on:
   push:
     paths:
       - 'index.html'
+      - 'district-flatwater-fitness-banner.svg'
       - 'app.js'
       - 'phase8.js'
       - 'phase9-core.js'
