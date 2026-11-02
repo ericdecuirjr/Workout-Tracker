@@ -4,6 +4,8 @@ on:
   push:
     paths:
       - 'index.html'
+      - 'district-flatwater-fitness-banner.svg'
+      - 'phase10-banner.test.cjs'
       - 'app.js'
       - 'phase8.js'
       - 'phase9-core.js'
@@ -55,6 +57,7 @@ jobs:
           node --check phase9-nav.js
           node phase9.test.cjs
           node phase9-nav.test.cjs
+          node phase10-banner.test.cjs
       - name: Prepare bundled offline app
         run: npm run build:web
       - name: Generate Android native project

@@ -212,3 +212,12 @@ details.card{scroll-margin-top:22px}
   .feature-grid button strong{font-size:.84rem}
 }
 @media(max-width:360px){.main-nav button{font-size:.65rem}.feature-grid button strong{font-size:.79rem}}
+
+/* Phase 10: approved District Flatwater Fitness fleur-de-lis banner */
+.sr-only{position:absolute!important;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
+.brand-header{padding:0 0 8px;text-align:center}
+.fitness-banner{display:block;width:100%;height:auto;aspect-ratio:2/1;object-fit:contain;border-radius:12px;background:#fff;box-shadow:0 3px 16px rgba(25,41,29,.06)}
+.brand-tagline{font-size:.86rem;letter-spacing:.055em;font-weight:650;text-align:center;color:#4c6155;margin:8px 0 0}
+.launch-banner{display:block;width:min(92vw,470px);height:auto;aspect-ratio:2/1;background:#fff;border-radius:12px}
+.launch-brand-inner{max-width:100%;gap:6px}
+@media(max-width:600px){.brand-header{padding:0}.fitness-banner{border-radius:9px}.brand-tagline{font-size:.78rem;margin-top:6px}}
