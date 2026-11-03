@@ -122,22 +122,142 @@ $('undoSet').onclick=()=>{
   sets=updated;lastSavedId=null;$('undoSet').hidden=true;
   refreshQuickLog();setLogFeedback('Last saved set removed.');
 };
-renderTodaySets();renderRecentExercises();updateLastSetHint();document.querySelectorAll('[data-tab]').forEach(b=>b.onclick=()=>{document.querySelectorAll('[data-tab]').forEach(x=>x.classList.toggle('active',x===b));['dashboard','plan','power','log','history','progress'].forEach(id=>$(id).hidden=id!==b.dataset.tab);if(b.dataset.tab==='dashboard'){renderDashboard();renderWeeklySchedule()};if(b.dataset.tab==='power')renderPowerCycle();if(b.dataset.tab==='history')renderHistory();if(b.dataset.tab==='progress'){draw();window.refreshPhase8Analytics?.()}});function renderHistory(){$('entries').innerHTML=sets.length?'':'<p>No sets logged yet.</p>';[...sets].reverse().forEach(s=>{const a=document.createElement('article');const title=document.createElement('strong');title.textContent=s.exercise+' — '+s.weight+' lb × '+s.reps;const small=document.createElement('small');small.textContent=new Date(s.date).toLocaleString()+(s.notes?' · '+s.notes:'');const del=document.createElement('button');del.textContent='Delete';del.onclick=()=>{if(confirm('Delete this set?')){sets=sets.filter(x=>x.id!==s.id);save();renderHistory();refreshQuickLog()}};a.append(del,title,document.createElement('br'),small);$('entries').append(a)})}function draw(){const c=$('chart'),ctx=c.getContext('2d'),data=sets.filter(s=>s.exercise===$('chartExercise').value).sort((a,b)=>a.date.localeCompare(b.date));ctx.clearRect(0,0,c.width,c.height);ctx.fillStyle='#526174';ctx.font='17px sans-serif';if(!data.length){ctx.fillText('Log sets to see your progress.',30,65);$('summary').textContent='';return}const metric=$('metric').value;const values=data.map(x=>metric==='volume'?x.weight*x.reps:metric==='estimated'?x.weight*(1+x.reps/30):x.weight);const weights=values,min=Math.min(...weights),max=Math.max(...weights),lo=Math.max(0,min-5),hi=max+5;ctx.strokeStyle='#dce3ed';for(let i=0;i<=4;i++){let y=260-i*50;ctx.beginPath();ctx.moveTo(55,y);ctx.lineTo(610,y);ctx.stroke();ctx.fillText((lo+(hi-lo)*i/4).toFixed(0),12,y+5)}ctx.strokeStyle='#2563eb';ctx.lineWidth=3;ctx.beginPath();data.forEach((s,i)=>{const x=65+(data.length===1?0:i*530/(data.length-1)),y=260-(values[i]-lo)/(hi-lo)*200;i?ctx.lineTo(x,y):ctx.moveTo(x,y)});ctx.stroke();ctx.fillStyle='#2563eb';data.forEach((s,i)=>{const x=65+(data.length===1?0:i*530/(data.length-1)),y=260-(values[i]-lo)/(hi-lo)*200;ctx.beginPath();ctx.arc(x,y,5,0,Math.PI*2);ctx.fill()});$('summary').textContent=data.length+' sets · Best '+metric+': '+max.toFixed(1)+' · Latest: '+values[values.length-1].toFixed(1)}$('chartExercise').onchange=draw;$('metric').onchange=draw;$('export').onclick=()=>{const rows=[['Date','Exercise','Weight (lb)','Reps','Notes'],...sets.map(s=>[s.date,s.exercise,s.weight,s.reps,s.notes])];const csv=rows.map(r=>r.map(v=>'"'+String(v).replace(/"/g,'""')+'"').join(',')).join('\r\n');saveExportFile('workout-history.csv',csv,'text/csv')};let duration=90,remaining=90,interval=null;function clock(){const m=Math.floor(remaining/60),s=remaining%60;$('clock').textContent=String(m).padStart(2,'0')+':'+String(s).padStart(2,'0')}function pause(){clearInterval(interval);interval=null}document.querySelectorAll('[data-seconds]').forEach(b=>b.onclick=()=>{pause();duration=remaining=Number(b.dataset.seconds);clock();$('start').textContent='Start rest';$('restStatus').textContent='Rest timer set to '+duration+' seconds.'});function startRest(){
+renderTodaySets();renderRecentExercises();updateLastSetHint();document.querySelectorAll('[data-tab]').forEach(b=>b.onclick=()=>{document.querySelectorAll('[data-tab]').forEach(x=>x.classList.toggle('active',x===b));['dashboard','plan','power','log','history','progress'].forEach(id=>$(id).hidden=id!==b.dataset.tab);if(b.dataset.tab==='dashboard'){renderDashboard();renderWeeklySchedule()};if(b.dataset.tab==='power')renderPowerCycle();if(b.dataset.tab==='history')renderHistory();if(b.dataset.tab==='progress'){draw();window.refreshPhase8Analytics?.()}});function renderHistory(){$('entries').innerHTML=sets.length?'':'<p>No sets logged yet.</p>';[...sets].reverse().forEach(s=>{const a=document.createElement('article');const title=document.createElement('strong');title.textContent=s.exercise+' — '+s.weight+' lb × '+s.reps;const small=document.createElement('small');small.textContent=new Date(s.date).toLocaleString()+(s.notes?' · '+s.notes:'');const del=document.createElement('button');del.textContent='Delete';del.onclick=()=>{if(confirm('Delete this set?')){sets=sets.filter(x=>x.id!==s.id);save();renderHistory();refreshQuickLog()}};a.append(del,title,document.createElement('br'),small);$('entries').append(a)})}function draw(){const c=$('chart'),ctx=c.getContext('2d'),data=sets.filter(s=>s.exercise===$('chartExercise').value).sort((a,b)=>a.date.localeCompare(b.date));ctx.clearRect(0,0,c.width,c.height);ctx.fillStyle='#526174';ctx.font='17px sans-serif';if(!data.length){ctx.fillText('Log sets to see your progress.',30,65);$('summary').textContent='';return}const metric=$('metric').value;const values=data.map(x=>metric==='volume'?x.weight*x.reps:metric==='estimated'?x.weight*(1+x.reps/30):x.weight);const weights=values,min=Math.min(...weights),max=Math.max(...weights),lo=Math.max(0,min-5),hi=max+5;ctx.strokeStyle='#dce3ed';for(let i=0;i<=4;i++){let y=260-i*50;ctx.beginPath();ctx.moveTo(55,y);ctx.lineTo(610,y);ctx.stroke();ctx.fillText((lo+(hi-lo)*i/4).toFixed(0),12,y+5)}ctx.strokeStyle='#2563eb';ctx.lineWidth=3;ctx.beginPath();data.forEach((s,i)=>{const x=65+(data.length===1?0:i*530/(data.length-1)),y=260-(values[i]-lo)/(hi-lo)*200;i?ctx.lineTo(x,y):ctx.moveTo(x,y)});ctx.stroke();ctx.fillStyle='#2563eb';data.forEach((s,i)=>{const x=65+(data.length===1?0:i*530/(data.length-1)),y=260-(values[i]-lo)/(hi-lo)*200;ctx.beginPath();ctx.arc(x,y,5,0,Math.PI*2);ctx.fill()});$('summary').textContent=data.length+' sets · Best '+metric+': '+max.toFixed(1)+' · Latest: '+values[values.length-1].toFixed(1)}$('chartExercise').onchange=draw;$('metric').onchange=draw;$('export').onclick=()=>{const rows=[['Date','Exercise','Weight (lb)','Reps','Notes'],...sets.map(s=>[s.date,s.exercise,s.weight,s.reps,s.notes])];const csv=rows.map(r=>r.map(v=>'"'+String(v).replace(/"/g,'""')+'"').join(',')).join('\r\n');saveExportFile('workout-history.csv',csv,'text/csv')};
+let duration=90,remaining=90,interval=null,restDeadline=null;
+// Timer options live under their own key; workout-tracker-v1 history is unchanged.
+const restSettingsKey='district-flatwater-rest-timer-settings-v1';
+const restSettings={sound:true,keepAwake:true};
+try{
+  const saved=JSON.parse(localStorage.getItem(restSettingsKey)||'{}');
+  if(typeof saved.sound==='boolean')restSettings.sound=saved.sound;
+  if(typeof saved.keepAwake==='boolean')restSettings.keepAwake=saved.keepAwake;
+}catch{}
+$('restSound').checked=restSettings.sound;
+$('keepScreenOn').checked=restSettings.keepAwake;
+function saveRestSettings(){try{localStorage.setItem(restSettingsKey,JSON.stringify(restSettings))}catch{}}
+let restAudioContext=null;
+function prepareRestAudio(){
+  if(!restSettings.sound)return;
+  const AudioCtor=window.AudioContext||window.webkitAudioContext;
+  if(!AudioCtor)return;
+  try{
+    if(!restAudioContext)restAudioContext=new AudioCtor();
+    if(restAudioContext.state==='suspended')restAudioContext.resume().catch(()=>{});
+  }catch{}
+}
+function playRestSound(){
+  if(!restSettings.sound)return false;
+  prepareRestAudio();
+  if(!restAudioContext||restAudioContext.state!=='running')return false;
+  try{
+    const t=restAudioContext.currentTime+0.03;
+    [0,0.22,0.44].forEach((offset,index)=>{
+      const oscillator=restAudioContext.createOscillator();
+      const gain=restAudioContext.createGain();
+      oscillator.type='sine';
+      oscillator.frequency.value=index===2?950:760;
+      gain.gain.setValueAtTime(0.0001,t+offset);
+      gain.gain.exponentialRampToValueAtTime(0.28,t+offset+0.025);
+      gain.gain.exponentialRampToValueAtTime(0.0001,t+offset+0.18);
+      oscillator.connect(gain);
+      gain.connect(restAudioContext.destination);
+      oscillator.start(t+offset);
+      oscillator.stop(t+offset+0.19);
+    });
+    return true;
+  }catch{return false}
+}
+let screenWakeLock=null,wakeRequest=Promise.resolve();
+function syncRestScreenAwake(){
+  const shouldStayAwake=Boolean(interval&&restSettings.keepAwake&&!document.hidden);
+  // Serialize requests so a late wake request cannot override a pause/reset.
+  wakeRequest=wakeRequest.catch(()=>{}).then(async()=>{
+    if(window.WorkoutNative?.isNative&&typeof window.WorkoutNative.setScreenAwake==='function'){
+      try{await window.WorkoutNative.setScreenAwake(shouldStayAwake);return}catch{}
+    }
+    if(shouldStayAwake){
+      if(screenWakeLock||!navigator.wakeLock?.request)return;
+      try{
+        const lock=await navigator.wakeLock.request('screen');
+        screenWakeLock=lock;
+        lock.addEventListener?.('release',()=>{if(screenWakeLock===lock)screenWakeLock=null});
+      }catch{}
+    }else if(screenWakeLock){
+      const lock=screenWakeLock;
+      screenWakeLock=null;
+      try{await lock.release()}catch{}
+    }
+  });
+}
+function clock(){
+  const m=Math.floor(remaining/60),s=remaining%60;
+  $('clock').textContent=String(m).padStart(2,'0')+':'+String(s).padStart(2,'0');
+}
+function pause(){
+  if(interval){
+    remaining=Math.max(0,Math.ceil((restDeadline-Date.now())/1000));
+    clearInterval(interval);interval=null;restDeadline=null;
+  }
+  syncRestScreenAwake();
+}
+function finishRest(){
+  pause();remaining=0;clock();
+  $('start').textContent='Start rest';
+  $('restStatus').textContent='Rest complete. Ready for your next set!';
+  playRestSound();
+  try{navigator.vibrate?.([250,150,250])}catch{}
+}
+function tickRest(){
+  if(!interval)return;
+  remaining=Math.max(0,Math.ceil((restDeadline-Date.now())/1000));
+  clock();
+  if(remaining===0)finishRest();
+}
+document.querySelectorAll('[data-seconds]').forEach(b=>b.onclick=()=>{
+  pause();duration=remaining=Number(b.dataset.seconds);clock();
+  $('start').textContent='Start rest';
+  $('restStatus').textContent='Rest timer set to '+duration+' seconds.';
+});
+function startRest(){
   if(interval)return;
   if(remaining<=0)remaining=duration;
+  prepareRestAudio();
+  restDeadline=Date.now()+remaining*1000;
   $('restStatus').textContent='Rest period in progress.';
   $('start').textContent='Pause rest';
-  interval=setInterval(()=>{
-    remaining--;clock();
-    if(remaining<=0){
-      pause();$('start').textContent='Start rest';
-      $('restStatus').textContent='Rest complete. Ready for your next set!';
-      navigator.vibrate?.([250,150,250]);
-    }
-  },1000);
+  interval=setInterval(tickRest,250);
+  syncRestScreenAwake();
 }
-$('start').onclick=()=>{if(interval){pause();$('start').textContent='Resume rest';$('restStatus').textContent='Rest paused.';return}startRest()};
-$('reset').onclick=()=>{pause();remaining=duration;clock();$('start').textContent='Start rest';$('restStatus').textContent='Rest timer is ready.'};
+$('start').onclick=()=>{
+  if(interval){pause();$('start').textContent='Resume rest';$('restStatus').textContent='Rest paused.';return}
+  startRest();
+};
+$('reset').onclick=()=>{
+  pause();remaining=duration;clock();
+  $('start').textContent='Start rest';$('restStatus').textContent='Rest timer is ready.';
+};
+$('restSound').onchange=()=>{
+  restSettings.sound=$('restSound').checked;
+  saveRestSettings();
+  if(restSettings.sound)prepareRestAudio();
+};
+$('keepScreenOn').onchange=()=>{
+  restSettings.keepAwake=$('keepScreenOn').checked;
+  saveRestSettings();syncRestScreenAwake();
+};
+$('testRestSound').onclick=()=>{
+  prepareRestAudio();
+  const played=playRestSound();
+  $('restStatus').textContent=played?'Sound preview played. Check your media volume if quiet.':'Sound is off or unavailable. Enable the sound option and check your media volume.';
+};
+document.addEventListener('visibilitychange',()=>{
+  if(interval)tickRest();
+  syncRestScreenAwake();
+});
+window.addEventListener('pagehide',()=>{
+  if(interval){clearInterval(interval);interval=null;restDeadline=null}
+  syncRestScreenAwake();
+});
 clock();if('serviceWorker'in navigator&&location.protocol==='https:'&&location.hostname!=='localhost')navigator.serviceWorker.register('./sw.js').catch(()=>{});
 function localDay(date){const d=new Date(date);return Number.isNaN(d.getTime())?'':`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`}
 function startOfWeek(d){const x=new Date(d.getFullYear(),d.getMonth(),d.getDate());x.setDate(x.getDate()-(x.getDay()+6)%7);return x}
