@@ -221,3 +221,8 @@ details.card{scroll-margin-top:22px}
 .launch-banner{display:block;width:min(92vw,470px);height:auto;aspect-ratio:2/1;background:#fff;border-radius:12px}
 .launch-brand-inner{max-width:100%;gap:6px}
 @media(max-width:600px){.brand-header{padding:0}.fitness-banner{border-radius:9px}.brand-tagline{font-size:.78rem;margin-top:6px}}
+
+/* Phase 11: rest timer sound and screen-awake options */
+.timer-preferences{margin-top:14px;padding-top:8px;border-top:1px solid #e0e6ef}
+.timer-preferences .auto-rest{margin:12px 0}
+.timer-preferences .small-action{margin:5px 0 0}
